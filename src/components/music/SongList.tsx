@@ -1,8 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import { addMusicSongToPlaylist, playMusicLater, playMusicSong } from '@/lib/music/actions';
 import { SourcePill } from '@/lib/music/shared';
 import type { Song } from '@/lib/music/types';
+
+function SongCover({ song }: { song: Song }) {
+  const [failed, setFailed] = useState(false);
+  const cover = song.pic && !failed ? song.pic : '';
+
+  return (
+    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-white/10 shadow-inner">
+      {cover ? (
+        <img
+          src={cover}
+          alt={`${song.name} 封面`}
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-zinc-500">
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 19V6l12-2v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2Zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2Z" />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function SongList({ songs }: { songs: Song[] }) {
   return (
@@ -10,10 +37,13 @@ export default function SongList({ songs }: { songs: Song[] }) {
       {songs.map((song, index) => (
         <div
           key={`${song.platform}-${song.id}-${index}`}
-          className="grid grid-cols-[40px_1fr_auto_auto] md:grid-cols-[50px_2fr_1fr_auto_auto] gap-2 px-3 py-3 rounded-lg cursor-pointer transition-all hover:bg-white/5"
+          className="grid grid-cols-[32px_44px_1fr_auto_auto] md:grid-cols-[44px_48px_2fr_1fr_auto_auto] items-center gap-2 px-3 py-3 rounded-lg cursor-pointer transition-all hover:bg-white/5"
         >
           <div className="text-center text-zinc-500 dark:text-zinc-300 text-sm" onClick={() => playMusicSong(song, index)}>
             {index + 1}
+          </div>
+          <div onClick={() => playMusicSong(song, index)}>
+            <SongCover song={song} />
           </div>
           <div className="min-w-0" onClick={() => playMusicSong(song, index)}>
             <div className="text-sm font-medium text-white truncate">{song.name}</div>

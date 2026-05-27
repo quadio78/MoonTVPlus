@@ -19,12 +19,24 @@ export function normalizeSource(source: string | undefined | null): MusicSource 
 
 export function mapSong(song: any): Song {
   const rawSource = song.source || song.platform || song.vendor || song.origin;
+  const pic =
+    song.pic ||
+    song.cover ||
+    song.img ||
+    song.image ||
+    song.imageUrl ||
+    song.albumPicUrl ||
+    song.meta?.picUrl ||
+    song.album?.picUrl ||
+    song.album?.pic ||
+    song.al?.picUrl;
+
   return {
     id: String(song.id ?? song.songId ?? song.rid ?? song.mid ?? ''),
     name: song.name || song.title || '未知歌曲',
     artist: song.artist || song.singer || song.artists || '未知艺术家',
     album: song.album || song.albumName,
-    pic: song.pic || song.cover || song.img,
+    pic,
     platform: normalizeSource(rawSource),
     duration: song.durationSec || song.duration,
     durationText: song.durationText || song.interval,
